@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="url" value="jdbc:postgresql://localhost:5432/stattracker" />
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="username" value="postgres" />
+        <property name="password" value="postgres" />
+        <property name="removeAbandoned" value="true" />
+        <property name="initialSize" value="2" />
+        <property name="maxActive" value="5" />
+    </bean>
+    <bean id="personImporter" class="com.mcknight.stattracker.importer.PersonImporter">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="ballparkImporter" class="com.mcknight.stattracker.importer.BallparkImporter">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+     <bean id="scheduleImporter" class="com.mcknight.stattracker.importer.ScheduleImporter">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>    
+    <bean id="franchiseImporter" class="com.mcknight.stattracker.importer.FranchiseImporter">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="importerFactory" class="com.mcknight.stattracker.importer.ImporterFactory">
+    	<property name="importerMap">
+    		<map key-type="java.lang.String" value-type="com.mcknight.stattracker.importer.Importer">
+                <entry key="person" value-ref="personImporter" />
+                <entry key="ballpark" value-ref="ballparkImporter" />     
+                <entry key="schedule" value-ref="scheduleImporter" />
+                <entry key="franchise" value-ref="franchiseImporter" />          
+            </map>
+    	</property>
+    </bean>
+
+    <!-- more bean definitions for data access objects go here -->
+
+</beans>
